@@ -50,7 +50,7 @@ export const createPreviewsFragment  = (array , start, end) => {
 
     let previewFragment = document.createDocumentFragment();
 
-    for (let i = 0; i < booksSlice.length; i++){
+    for (let i = 0; i < booksExtract.length; i++){
 
         let { author, image, title, id } = booksExtract[i];
         author = authors[author];

@@ -16,8 +16,8 @@
 
 // Import data from data.js and handlers.
 import { BOOKS_PER_PAGE, authors, genres, books } from "./data.js"
-import { html, } from "/handlersCode.js";
-import { createPreviewsFragment, updateRemaining } from "/handlersCode.js"
+import { html, } from "./handlers.js";
+import { createPreviewsFragment, updateRemaining } from "./handlers.js"
 
 const range = [0, 36]
 const matches = books; // Try to convert matches to an indepenedent copy.
