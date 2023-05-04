@@ -1,185 +1,236 @@
-matches = books
-page = 1;
 
-if (!books && !Array.isArray(books)) throw new Error('Source required') 
-if (!range && range.length < 2) throw new Error('Range must be an array with two numbers')
+/* 1 - This Code was initially not commented by the first developer and that made it hard to fix the final layout of the app. Functions must have comments describing 
+ *      parameters and logic to improve code readeability for easier debugging for future reference.
+ *
+ * 2 - Functions must be declared using const or let keywords which makes it easier to spot the bug and functioning.
+ * 
+ * 3 - Some code, for instance code creating dropdown menu options,
+ *      could be better created using a function. This was done with functions to create HTML fragments.
+ *      This had the benefit of being reusable.
+ * 
+ * 4 - Code was randomly arranged with code for functions that work together placed far from each other as seen on originalcode.js.
+ *      To improve readability, code has been rearranged and broken up into sections based on functions(by using event listeners and also extracting the information from html).
+ * 
+ * 5 - The dark/light mode icon is measleading. It looks more like a login button and that can be confusing for users sometimes if they are first time users of the app.
+ */
 
-day = {
+// Import data from data.js and handlers.
+import { BOOKS_PER_PAGE, authors, genres, books } from "./data.js"
+import { html, } from "/handlersCode.js";
+import { createPreviewsFragment, updateRemaining } from "/handlersCode.js"
+
+const range = [0, 36]
+const matches = books; // Try to convert matches to an indepenedent copy.
+let page = 1;
+
+/* This code checks if a book is not empty/undefined, and if it is an array.
+ * Therefore it must be changed '&&' to || because both are invalid. 
+ */
+if (!books || !Array.isArray(books)) throw new Error('Source required');
+
+/* range is an array to check if range is within 0 - 36.
+ * Change "< 2" to "=== 2" to avoid future errors.
+ */
+if (!range && range.length === 2) throw new Error('Range must be an array with two numbers');
+
+
+/** this is the theme constrast for easier readability for the users
+ * day theme in white color
+ * night theme in navy like color
+ */
+const day = {
     dark: '10, 10, 20',
     light: '255, 255, 255',
-}
+};
 
-night = {
+const night = {
     dark: '255, 255, 255',
     light: '10, 10, 20',
-}
+};
 
-fragment = document.createDocumentFragment()
-const extracted = books.slice(0, 36)
+let fragment = createPreviewsFragment(matches, 0, 36)
 
-for ({ author, image, title, id }; extracted; i++) {
-    const preview = createPreview({
-        author,
-        id,
-        image,
-        title
-    })
+html.view.mainHtml.appendChild(fragment);
 
-    fragment.appendChild(preview)
-}
+window.scrollTo({ top: 0, behavior: 'smooth' }); ///scroll to top on reload page for more books.
 
-data-list-items.appendChild(fragment)
+/* ------------------------
+SEARCH FUNCTIONS
+-------------------------*/
 
-genres = document.createDocumentFragment()
-element = document.createElement('option')
+/* Genres */
+
+const genresHtml = document.createDocumentFragment();
+let element = document.createElement('option');
 element.value = 'any'
-element = 'All Genres'
-genres.appendChild(element)
+element.innerText = 'All Genres';
+genresHtml.appendChild(element);
 
-for ([id, name]; Object.entries(genres); i++) {
-    document.createElement('option')
-    element.value = value
-    element.innerText = text
-    genres.appendChild(element)
-}
+for (const [id, name] of Object.entries(genres)) {
+    element = document.createElement('option');
+    element.value = id;
+    element.innerText = name;
+    genresHtml.appendChild(element);
+};
 
-data-search-genres.appendChild(genres)
+html.search.searchGenres.appendChild(genresHtml);
 
-authors = document.createDocumentFragment()
-element = document.createElement('option')
-element.value = 'any'
-element.innerText = 'All Authors'
-authors.appendChild(element)
 
-for ([id, name];Object.entries(authors); id++) {
-    document.createElement('option')
-    element.value = value
-    element = text
-    authors.appendChild(element)
-}
+/* Authors */
 
-data-search-authors.appendChild(authors)
+const authorsHtml = document.createDocumentFragment();
+element = document.createElement('option');
+element.value = 'any';
+element.innerText = 'All Authors';
+authorsHtml.appendChild(element);
 
-data-settings-theme.value === window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'day'
-v = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches? 'night' | 'day'
+for (const [id, name] of Object.entries(authors)) {
+    element = document.createElement('option');
+    element.value = id;
+    element.innerText = name;
+    authorsHtml.appendChild(element);
+};
 
-documentElement.style.setProperty('--color-dark', css[v].dark);
-documentElement.style.setProperty('--color-light', css[v].light);
-data-list-button = "Show more (books.length - BOOKS_PER_PAGE)"
+html.search.searchAuthors.appendChild(authorsHtml);
 
-data-list-button.disabled = !(matches.length - [page * BOOKS_PER_PAGE] > 0)
+/* Search Overlay */ 
 
-data-list-button.innerHTML = /* html */ [
-    '<span>Show more</span>',
-    '<span class="list__remaining"> (${matches.length - [page * BOOKS_PER_PAGE] > 0 ? matches.length - [page * BOOKS_PER_PAGE] : 0})</span>',
-]
+ html.search.searchCancel.addEventListener('click', () => {
+    html.search.searchOverlay.close();
+    html.search.searchSubmit.reset();
+ });
 
-data-search-cancel.click() { data-search-overlay.open === false }
-data-settings-cancel.click() { querySelect(data-settings-overlay).open === false }
-data-settings-form.submit() { actions.settings.submit }
-data-list-close.click() { data-list-active.open === false }
+html.search.searchButton.addEventListener('click', () => {
+html.search.searchOverlay.showModal();
+html.search.seacrhTitle.focus();                // Might be reduntant but can be updated for better experience//.
+}); 
 
-data-list-button.click() {
-    document.querySelector([data-list-items]).appendChild(createPreviewsFragment(matches, page x BOOKS_PER_PAGE, {page + 1} x BOOKS_PER_PAGE]))
-    actions.list.updateRemaining()
-    page = page + 1
-}
+html.search.searchSubmit.addEventListener('submit', (event) => {
+    event.preventDefault();
 
-data-header-search.click() {
-    data-search-overlay.open === true ;
-    data-search-title.focus();
-}
+    const formData = new FormData(event.target);
+    const filters = Object.fromEntries(formData);
+    const result = Object.entries(filters); 
 
-data-search-form.click(filters) {
-    preventDefault()
-    const formData = new FormData(event.target)
-    const filters = Object.fromEntries(formData)
-    result = []
+    let searchResult = [];
+    let titleMatch = null;
+    let authorMatch = null;
+    let genreMatch = null;
 
-    for (book; booksList; i++) {
-        titleMatch = filters.title.trim() = '' && book.title.toLowerCase().includes[filters.title.toLowerCase()]
-        authorMatch = filters.author = 'any' || book.author === filters.author
+    for (let x = 0; x < books.length; x++) {
 
-        {
-            genreMatch = filters.genre = 'any'
-            for (genre; book.genres; i++) { if singleGenre = filters.genre { genreMatch === true }}}
-        }
+        if ((filters.title.trim()) && (books[x].title.toLowerCase().includes(filters.title.toLowerCase()))) {
+            titleMatch = books[x];
+            searchResult.push(titleMatch);
+        }; 
+        
+        if (filters.author !== 'All Authors' && books[x].author.includes(filters.author)) {
+            authorMatch = books[x];
+            searchResult.push(authorMatch);
+        };
 
-        if titleMatch && authorMatch && genreMatch => result.push(book)
+        if (filters.genre !== 'All Genres' && books[x].genres.includes(filters.genre)) {
+            genreMatch = books[x];   
+            searchResult.push(genreMatch);           
+        };
+
+        if (!(filters.title.trim()) && (authorMatch === 'All Authors') && (genreMatch === 'All Genres')) {
+            console.log("You searched nothing!")
+        };
+
     }
 
-    if display.length < 1 
-    data-list-message.class.add('list__message_show')
-    else data-list-message.class.remove('list__message_show')
-    
+    if (searchResult.length > 0) {
+        let resultFragment = createPreviewsFragment(searchResult);
+        html.view.mainHtml.replaceChildren(resultFragment); 
 
-    data-list-items.innerHTML = ''
-    const fragment = document.createDocumentFragment()
-    const extracted = source.slice(range[0], range[1])
-
-    for ({ author, image, title, id }; extracted; i++) {
-        const { author: authorId, id, image, title } = props
-
-        element = document.createElement('button')
-        element.classList = 'preview'
-        element.setAttribute('data-preview', id)
-
-        element.innerHTML = /* html */ `
-            <img
-                class="preview__image"
-                src="${image}"
-            />
-            
-            <div class="preview__info">
-                <h3 class="preview__title">${title}</h3>
-                <div class="preview__author">${authors[authorId]}</div>
-            </div>
-        `
-
-        fragment.appendChild(element)
-    }
-    
-    data-list-items.appendChild(fragments)
-    initial === matches.length - [page * BOOKS_PER_PAGE]
-    remaining === hasRemaining ? initial : 0
-    data-list-button.disabled = initial > 0
-
-    data-list-button.innerHTML = /* html */ `
+        html.scroll.moreButton.innerHTML = /* html */ `
         <span>Show more</span>
-        <span class="list__remaining"> (${remaining})</span>
-    `
+        <span class="list__remaining"> (0)</span>
+        `;
+        html.scroll.moreButton.disabled = true;
+        showPreview();        
+    };
+
+    html.search.searchOverlay.close();
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    data-search-overlay.open = false
-}
 
-data-settings-overlay.submit; {
-    preventDefault()
-    const formData = new FormData(event.target)
-    const result = Object.fromEntries(formData)
-    document.documentElement.style.setProperty('--color-dark', css[result.theme].dark);
-    document.documentElement.style.setProperty('--color-light', css[result.theme].light);
-    data-settings-overlay).open === false
-}
+    html.search.searchSubmit.reset();
+});
 
-data-list-items.click() {
-    pathArray = Array.from(event.path || event.composedPath())
-    active;
+//     if display.length < 1 
+//     data-list-message.class.add('list__message_show')
+//     else data-list-message.class.remove('list__message_show')
 
-    for (node; pathArray; i++) {
-        if active break;
-        const previewId = node?.dataset?.preview
-    
-        for (const singleBook of books) {
-            if (singleBook.id === id) active = singleBook
-        } 
+/* ---------------------------
+DISPLAY SETTINGS-
+------------------ */ 
+
+// This code checks darkmode/lightmode settings of user's system and assign them to the websites settings.
+html.display.settingsTheme.value = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'day';
+
+let v = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches? 'night' : 'day';
+
+html.display.settingButton.addEventListener('click', () => {
+    html.display.settingsOverlay.showModal();
+});
+
+html.display.settingsCancel.addEventListener('click', () => {
+    html.display.settingsOverlay.close();
+    html.display.settingsSubmit.reset();
+});
+
+const css = {
+    day : ['255, 255, 255', '10, 10, 20'],
+    night: ['10, 10, 20','255, 255, 255']
+};
+
+html.display.settingsSubmit.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+
+    const selected = Object.fromEntries(formData);
+
+    if (selected.theme === 'night') {
+        document.documentElement.style.setProperty('--color-light', css[selected.theme][0]);
+        document.documentElement.style.setProperty('--color-dark', css[selected.theme][1]);        
+    } else if (selected.theme === 'day') {
+        document.documentElement.style.setProperty('--color-light', css[selected.theme][0]);
+        document.documentElement.style.setProperty('--color-dark', css[selected.theme][1]);
+    };
+
+    html.display.settingsOverlay.close();
+});
+
+/* -----------------------
+PAGE SCROLL-
+------------------------ */ 
+
+let pagesRemaining = matches.length - (page * BOOKS_PER_PAGE);
+
+html.scroll.moreButton.innerHTML = /* html */ `
+    <span>Show more</span>
+    <span class="list__remaining"> (${pagesRemaining > 0 ? pagesRemaining : 0})</span>
+`;
+
+html.scroll.moreButton.addEventListener('click', () => {
+if (pagesRemaining <= 0) {
+    html.scroll.moreButton.disabled;
+}else {
+    html.view.mainHtml.appendChild(createPreviewsFragment(matches, (page * BOOKS_PER_PAGE), (page + 1) * BOOKS_PER_PAGE));
+    page = page + 1;
+    pagesRemaining = updateRemaining(matches, page);
+
+    html.scroll.moreButton.innerHTML = /* html */ `
+    <span>Show more</span>
+    <span class="list__remaining"> (${pagesRemaining > 0 ? pagesRemaining : 0})</span>
+    `
     }
-    
-    if !active return
-    data-list-active.open === true
-    data-list-blur + data-list-image === active.image
-    data-list-title === active.title
-    
-    data-list-subtitle === '${authors[active.author]} (${Date(active.published).year})'
-    data-list-description === active.description
-}
+});
+
+
+/* -------------------------------------PREVIEW OVERLAY--------------------------------*/
+
+ting();
