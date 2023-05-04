@@ -1,4 +1,4 @@
-import { TABLES, COLUMNS, state } from './data'
+import { TABLES, COLUMNS, state } from './data.js'
 
 /**
  * Takes any order as an object literal (as saved in state) and converts it a
