@@ -113,21 +113,21 @@ html.search.searchSubmit.addEventListener('submit', (event) => {
     let authorMatch = null;
     let genreMatch = null;
 
-    for (let x = 0; x < books.length; x++) {
+    for (let i = 0; i < books.length; i++) {
 
-        if ((filters.title.trim()) && (books[x].title.toLowerCase().includes(filters.title.toLowerCase()))) {
-            titleMatch = books[x];
+        if ((filters.title.trim()) && (books[i].title.toLowerCase().includes(filters.title.toLowerCase()))) {
+            titleMatch = books[i];
             searchResult.push(titleMatch);
             console.log(searchResult)
         }; 
         
-        if (filters.author !== 'any' && books[x].author.includes(filters.author)) {
-            authorMatch = books[x];
+        if (filters.author !== 'any' && books[i].author.includes(filters.author)) {
+            authorMatch = books[i];
             searchResult.push(authorMatch);            
         };
 
-        if (filters.genre !== 'any' && books[x].genres.includes(filters.genre)) {
-            genreMatch = books[x];   
+        if (filters.genre !== 'any' && books[i].genres.includes(filters.genre)) {
+            genreMatch = books[i];   
             searchResult.push(genreMatch);       
         };
 
@@ -168,6 +168,47 @@ html.search.searchSubmit.addEventListener('submit', (event) => {
 
     window.scrollTo({ top: 0, behavior: 'smooth' });    
 });
+
+html.search.searchCancel.addEventListener('click', () => {
+    html.search.searchOverlay.close();
+    html.search.searchSubmit.reset();
+ });
+
+html.search.searchButton.addEventListener('click', () => {
+html.search.searchOverlay.showModal();
+}); 
+
+html.search.searchSubmit.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+    const filters = Object.fromEntries(formData);
+    const result = Object.entries(filters); 
+
+    let searchResult = [];
+
+
+    for (let i = 0; i < books.length; i++) {
+
+        searchTitle(filters.title, i, searchResult);
+        
+        searchAuthor(filters.author, i, searchResult)
+
+        searchGenre(filters.genre, i, searchResult)
+
+        searchNothing(filters.title, filters.author, filters.genre);
+    }
+
+    html.search.searchOverlay.close();
+    html.search.seachMessage.setAttribute('class', 'list__message');
+    html.search.searchSubmit.reset();
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });    
+});
+
+
+
+//this code allows the search button to be responsive and easier to fetch the required data//
 const searchTitle = (title, index, searchResult) => {
     let titleMatch;
     if ((title.trim()) && (books[index].title.toLowerCase().includes(title.toLowerCase()))) {
@@ -226,7 +267,51 @@ const searchAll = (filters, index, searchResult) => {
 };
 
 
+/**
+ * This handler shows the book description overlay when the book is clicked on
+ * @param event 
+ */
+const descriptionOverlay = (event) => {
+    event.preventDefault()
 
+    //fetch the dialog box where the overlay will be appended
+    const bookSummary = document.querySelector('[data-list-active]')
+
+    //get the book that is clicked
+const book = event.target.closest('.preview');
+//get a book id to use to fetch book information
+const bookId = book.getAttribute('[data-preview]');
+
+//for loop to iterate over the book object looking for matching ids
+for (let z = 0; z < books.length; z++) {
+    //check if the id in the books object matches that of the clicked book
+    if (books[z].id === bookId) {
+    //create the overlaay div html
+    bookSummary.innerHTML = /*html*/
+    `<div class="overlay__preview">
+    <img class="overlay__blur" data-list-blur="" src="${books[z].image}">
+    <img class="overlay__image" data-list-image="" src="${books[z].image}">
+    </div>
+    <div class="overlay__content">
+    <h3 class="overlay__title" data-list-title="">${books[z].title} (${new Date(books[z].published).getFullYear()})</h3>
+    <div class="overlay__data" data-list-subtitle="">${authors[books[z].author]}</div>
+    <p class="overlay__data overlay__data_secondary" data-list-description="">${books[i].description}</p>
+    </div>
+    <div class="overlay__row">
+    <button class="overlay__button overlay__button_primary" data-list-close="">Close</button>
+    </div>`
+    }
+}
+
+    //show the book summary overlay when its done being created
+    bookSummary.showModal()
+
+    //when the close button is clicked, the overlay should be removed
+    document.querySelector('[data-list-close]').addEventListener("click", () => {
+        bookSummary.close()
+    })
+
+};
 
 /* ---------------------------
 DISPLAY SETTINGS-
@@ -294,3 +379,4 @@ if (pagesRemaining <= 0) {
     `
     }
 });
+showPreview();

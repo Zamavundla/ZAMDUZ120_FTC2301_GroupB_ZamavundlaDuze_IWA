@@ -174,6 +174,6 @@ export const showPreview = () => {
     html.preview.summaryOverlay.close();
 });
 
-}
+};
 
 
