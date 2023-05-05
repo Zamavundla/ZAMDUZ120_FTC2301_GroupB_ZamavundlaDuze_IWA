@@ -68,7 +68,7 @@ export const createPreviewsFragment  = (array , start, end) => {
 
 
 /**
- * This code determines the number of pages to travese on the app based on the total
+ * This code determines the number of pages to be shown on the app based on the total
  * number of books available in the database made originally.
  * 
  * @param {array} array with total number of books on the database.
@@ -117,6 +117,28 @@ export const html = {
         searchGenres: document.querySelector('[data-search-genres]'),
     },
 };
+
+
+export function showBookDescription() {
+    // Get the container element to display the book description
+    const container = document.querySelector('.book-description');
+  
+    // Create and update HTML elements to display the book description
+    const title = document.createElement('h2');
+    title.textContent = 'Book Title';
+  
+    const author = document.createElement('p');
+    author.textContent = 'Author Name';
+  
+    const description = document.createElement('p');
+    description.textContent = 'Book Description';
+  
+    // Append the elements to the container
+    container.appendChild(title);
+    container.appendChild(author);
+    container.appendChild(description);
+  }
+  
 
 
 /**

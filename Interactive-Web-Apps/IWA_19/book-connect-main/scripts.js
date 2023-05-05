@@ -1,23 +1,19 @@
 
-/* 1 - This Code was initially not commented by the first developer and that made it hard to fix the final layout of the app. Functions must have comments describing 
- *      parameters and logic to improve code readeability for easier debugging for future reference.
- *
- * 2 - Functions must be declared using const or let keywords which makes it easier to spot the bug and functioning.
- * 
- * 3 - Some code, for instance code creating dropdown menu options,
- *      could be better created using a function. This was done with functions to create HTML fragments.
- *      This had the benefit of being reusable.
- * 
- * 4 - Code was randomly arranged with code for functions that work together placed far from each other as seen on originalcode.js.
- *      To improve readability, code has been rearranged and broken up into sections based on functions(by using event listeners and also extracting the information from html).
- * 
- * 5 - The dark/light mode icon is measleading. It looks more like a login button and that can be confusing for users sometimes if they are first time users of the app.
- */
+/**
+ * It was challenging to fix the final layout of the app because the first developer had not initially commented this code. Function comments must have descriptions, arguments and logic to make the code more readable and facilitate future debugging.
 
+ * Functions must be declared with the const or let keyword, which makes it simpler to find bugs and ensures proper operation. Using a function might be preferable when writing some types of code, such as that which creates drop-down menu items. Functions were used to construct HTML fragments, which had the advantage of being reusable. 
+ *As seen on originalcode.js, code was randomly ordered, with code for related functions placed far apart.
+ * The code has been reorganized and divided into sections based on functions (by using event listeners and also extracting the information from html) to increase readability.
+ The dark/light mode symbol is deceptive, according to reviewers. For users who are using the app for the first time, it may be perplexing because it seems more like a login button.
+
+
+
+ */
 // Import data from data.js and handlers.
 import { BOOKS_PER_PAGE, authors, genres, books } from "./data.js"
 import { html, } from "./handlers.js";
-import { createPreviewsFragment, updateRemaining } from "./handlers.js"
+import { createPreviewsFragment, updateRemaining, showBookDescription } from "./handlers.js"
 
 const range = [0, 36]
 const matches = books; // Try to convert matches to an indepenedent copy.
@@ -95,14 +91,14 @@ html.search.searchAuthors.appendChild(authorsHtml);
 
 /* Search Overlay */ 
 
- html.search.searchCancel.addEventListener('click', () => {
+
+html.search.searchCancel.addEventListener('click', () => {
     html.search.searchOverlay.close();
     html.search.searchSubmit.reset();
  });
 
 html.search.searchButton.addEventListener('click', () => {
 html.search.searchOverlay.showModal();
-html.search.seacrhTitle.focus();                // Might be reduntant but can be updated for better experience//.
 }); 
 
 html.search.searchSubmit.addEventListener('submit', (event) => {
@@ -122,20 +118,22 @@ html.search.searchSubmit.addEventListener('submit', (event) => {
         if ((filters.title.trim()) && (books[x].title.toLowerCase().includes(filters.title.toLowerCase()))) {
             titleMatch = books[x];
             searchResult.push(titleMatch);
+            console.log(searchResult)
         }; 
         
-        if (filters.author !== 'All Authors' && books[x].author.includes(filters.author)) {
+        if (filters.author !== 'any' && books[x].author.includes(filters.author)) {
             authorMatch = books[x];
-            searchResult.push(authorMatch);
+            searchResult.push(authorMatch);            
         };
 
-        if (filters.genre !== 'All Genres' && books[x].genres.includes(filters.genre)) {
+        if (filters.genre !== 'any' && books[x].genres.includes(filters.genre)) {
             genreMatch = books[x];   
-            searchResult.push(genreMatch);           
+            searchResult.push(genreMatch);       
         };
 
-        if (!(filters.title.trim()) && (authorMatch === 'All Authors') && (genreMatch === 'All Genres')) {
-            console.log("You searched nothing!")
+        if (!filters.title.trim() && (filters.author === 'any') && (filters.genre === 'any')) {
+            html.search.searchOverlay.close();
+            html.search.searchSubmit.reset();
         };
 
     }
@@ -150,18 +148,85 @@ html.search.searchSubmit.addEventListener('submit', (event) => {
         `;
         html.scroll.moreButton.disabled = true;
         showPreview();        
+    } else {
+        html.search.seachMessage.setAttribute('class', 'list__message_show');
+
+        const firstElementChild = html.search.seachMessage;
+        html.view.mainHtml.innerHTML = '';
+        html.view.mainHtml.append(firstElementChild);
+
+        html.scroll.moreButton.innerHTML = /* html */ `
+        <span>Show more</span>
+        <span class="list__remaining"> (0)</span>
+        `;
+        html.scroll.moreButton.disabled = true;
     };
 
     html.search.searchOverlay.close();
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-
+    html.search.seachMessage.setAttribute('class', 'list__message');
     html.search.searchSubmit.reset();
-});
 
-//     if display.length < 1 
-//     data-list-message.class.add('list__message_show')
-//     else data-list-message.class.remove('list__message_show')
+    window.scrollTo({ top: 0, behavior: 'smooth' });    
+});
+const searchTitle = (title, index, searchResult) => {
+    let titleMatch;
+    if ((title.trim()) && (books[index].title.toLowerCase().includes(title.toLowerCase()))) {
+        titleMatch = books[index];
+        searchResult.push(titleMatch);
+        return 'success';
+    };
+    return 'fail';
+};
+
+const searchAuthor = (author, index, searchResult) => {
+    let authorMatch;
+    if (author !== 'any' && books[index].author.includes(author)) {
+        authorMatch = books[index];
+        searchResult.push(authorMatch);
+        return 'success';           
+    };
+    return 'fail';
+};
+
+const searchGenre = (genre, index, searchResult) => {
+    let genreMatch;
+    if (genre !== 'any' && books[index].genres.includes(genre)) {
+        genreMatch = books[index];   
+        searchResult.push(genreMatch);      
+    };
+};
+
+const searchNothing = (title, author, genre) => {
+    if (!title.trim() && (author === 'any') && (genre === 'any')) {
+        html.search.searchOverlay.close();
+        html.search.searchSubmit.reset();
+    };
+};
+
+const searchAll = (filters, index, searchResult) => {
+    let allMatch = [];
+
+    let titleState = (filters.title.trim()) && (books[index].title.toLowerCase().includes(filters.title.toLowerCase()));
+    let authorState = filters.author !== 'any' && books[index].author.includes(filters.author);
+    let genreState = filters.genre !== 'any' && books[index].genres.includes(filters.genre);
+
+    if (titleState != true) {
+        return 
+    };
+    if (authorState != true) {
+        return
+    };
+    if(genreState != true ) {
+        return 
+    };
+    
+    allMatch = books[index];
+
+    searchResult.push(allMatch);    
+};
+
+
+
 
 /* ---------------------------
 DISPLAY SETTINGS-
@@ -229,8 +294,3 @@ if (pagesRemaining <= 0) {
     `
     }
 });
-
-
-/* -------------------------------------PREVIEW OVERLAY--------------------------------*/
-
-ting();
