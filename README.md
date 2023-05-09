@@ -6,4 +6,4 @@
 
 
 
-Folder for all Challenges and Final Capstone Project
+Folder for all Challenges (IWA_1 up to IWA_18) and Final Capstone Project (IWA_19)
