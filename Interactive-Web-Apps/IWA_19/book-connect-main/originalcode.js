@@ -1,4 +1,4 @@
-/* matches = books
+ matches = books
 page = 1;
 
 if (!books && !Array.isArray(books)) throw new Error('Source required') 
@@ -69,7 +69,7 @@ data-list-button = "Show more (books.length - BOOKS_PER_PAGE)"
 
 data-list-button.disabled = !(matches.length - [page * BOOKS_PER_PAGE] > 0)
 
-data-list-button.innerHTML = /* html */ /*[
+data-list-button.innerHTML = /* html */ [
     '<span>Show more</span>',
     '<span class="list__remaining"> (${matches.length - [page * BOOKS_PER_PAGE] > 0 ? matches.length - [page * BOOKS_PER_PAGE] : 0})</span>',
 ]
@@ -124,7 +124,7 @@ data-search-form.click(filters) {
         element.classList = 'preview'
         element.setAttribute('data-preview', id)
 
-        element.innerHTML = /* html */ /*`
+        element.innerHTML = /* html */ `
             <img
                 class="preview__image"
                 src="${image}"
@@ -144,7 +144,7 @@ data-search-form.click(filters) {
     remaining === hasRemaining ? initial : 0
     data-list-button.disabled = initial > 0
 
-    data-list-button.innerHTML = /* html */ /*`
+    data-list-button.innerHTML = /* html */ `
         <span>Show more</span>
         <span class="list__remaining"> (${remaining})</span>
     `
@@ -182,4 +182,4 @@ data-list-items.click() {
     
     data-list-subtitle === '${authors[active.author]} (${Date(active.published).year})'
     data-list-description === active.description
-}*/
+}
