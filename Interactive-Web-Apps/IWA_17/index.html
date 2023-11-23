@@ -2,33 +2,37 @@
 
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Calendar</title>
-        <link rel="stylesheet" href="/challenge1.css">
-        <script src="/challenge-1.js" defer type="module"></script>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar</title>
+    <link rel="stylesheet" href="challenge1.css">
+    <script src="challenge-1.js" defer type="module"></script>
+</head>
 
-    <body>
+<body>
+    <div class="navigation">
+        <button id="prevMonth" aria-label="Previous Month">Previous Month</button>
         <h1 data-title>Loading...</h1>
+        <button id="nextMonth" aria-label="Next Month">Next Month</button>
+    </div>
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th class="table__cell table__cell_heading">Week</th>
-                    <th class="table__cell table__cell_heading">Sun</th>
-                    <th class="table__cell table__cell_heading">Mon</th>
-                    <th class="table__cell table__cell_heading">Tue</th>
-                    <th class="table__cell table__cell_heading">Wed</th>
-                    <th class="table__cell table__cell_heading">Thu</th>
-                    <th class="table__cell table__cell_heading">Fri</th>
-                    <th class="table__cell table__cell_heading">Sat</th>
-                </tr>
-            </thead>
+    <table class="table" role="grid" aria-labelledby="calendar-heading">
+        <thead>
+            <tr>
+                <th id="calendar-heading" class="table__cell table__cell_heading" scope="colgroup">Week</th>
+                <th class="table__cell table__cell_heading" scope="col">Sun</th>
+                <th class="table__cell table__cell_heading" scope="col">Mon</th>
+                <th class="table__cell table__cell_heading" scope="col">Tue</th>
+                <th class="table__cell table__cell_heading" scope="col">Wed</th>
+                <th class="table__cell table__cell_heading" scope="col">Thu</th>
+                <th class="table__cell table__cell_heading" scope="col">Fri</th>
+                <th class="table__cell table__cell_heading" scope="col">Sat</th>
+            </tr>
+        </thead>
 
-            <tbody data-content></tbody>
-        </table>
-    </body>
+        <tbody data-content role="rowgroup" aria-live="polite"></tbody>
+    </table>
+</body>
 </html>
