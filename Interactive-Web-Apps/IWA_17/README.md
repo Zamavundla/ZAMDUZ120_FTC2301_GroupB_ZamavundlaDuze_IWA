@@ -10,9 +10,9 @@ This repository contains a simple calendar application built with HTML, CSS, and
 
 - **index.html**: The main HTML file that structures the calendar layout and includes references to external styles and scripts.
 
-- **styles.css**: The CSS file that defines the visual styling for the calendar.
+- **challenge1.css**: The CSS file that defines the visual styling for the calendar.
 
-- **loops.js**: The JavaScript file responsible for generating the calendar data and populating the HTML structure.
+- **challenge-1.js**: The JavaScript file responsible for generating the calendar data and populating the HTML structure.
 
 ## Usage
 
