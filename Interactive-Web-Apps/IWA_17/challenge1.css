@@ -70,15 +70,11 @@ body {
 
 #prevMonth, #nextMonth {
 
-  background-color: rgba(0, 0, 0, 0.8);
-  color: antiquewhite;
   margin:  1VW;
-  padding: 2.5vw;
-  border-radius: 50%;
 
 }
 
 .fade-out {
 opacity: 0;
-transition: opacity 0.3s ease-in-out; /* Adjust the duration and easing as needed */
+transition: opacity 0.3s ease-in-out; 
 }
