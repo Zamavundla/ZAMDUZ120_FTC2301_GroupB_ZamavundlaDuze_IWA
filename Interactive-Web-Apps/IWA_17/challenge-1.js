@@ -1,16 +1,39 @@
+/**
+ * Array containing names of months.
+ * @type {string[]}
+ */
 const MONTHS = [
     'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
+/**
+ * Object representing days of the week.
+ * @enum {number}
+ */
 const WeekDay = {
     Sunday: 0,
     Saturday: 6,
 };
 
+/**
+ * Get the number of days in a month for a given date.
+ * @param {Date} date - The input date.
+ * @returns {number} - The number of days in the month.
+ */
 const getDaysInMonth = (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 
+/**
+ * Create an array of a given length filled with null values.
+ * @param {number} length - The length of the array to create.
+ * @returns {Array} - The created array.
+ */
 const createArray = (length) => Array.from({ length }, () => null);
 
+/**
+ * Create a data structure representing a calendar for a given month.
+ * @param {Date} date - The date for the month.
+ * @returns {Array} - The calendar data structure.
+ */
 const createData = (date) => {
     date.setDate(1);
     let startDay = date.getDay();
@@ -38,6 +61,13 @@ const createData = (date) => {
     return result;
 };
 
+/**
+ * Add a table cell to the existing HTML string.
+ * @param {string} existing - The existing HTML string.
+ * @param {string} classString - The class string for the table cell.
+ * @param {string|number} value - The value to be displayed in the cell.
+ * @returns {string} - The updated HTML string.
+ */
 const addCell = (existing, classString, value) => {
     const result = /* html */ `
         <td ${classString}>
@@ -48,6 +78,11 @@ const addCell = (existing, classString, value) => {
     return result;
 };
 
+/**
+ * Create HTML string for the calendar data.
+ * @param {Array} data - The calendar data structure.
+ * @returns {string} - The HTML string.
+ */
 const createHtml = (data) => {
     let result = '';
     for (let weekIndex = 0; weekIndex < data.length; weekIndex++) {
@@ -76,9 +111,13 @@ const createHtml = (data) => {
     return result;
 };
 
+/**
+ * Update the calendar display for a given date.
+ * @param {Date} date - The date to update the calendar for.
+ */
 const updateCalendar = (date) => {
     const tableBody = document.querySelector('[data-content]');
-    
+
     tableBody.classList.add('fade-out');
 
     setTimeout(() => {
@@ -88,17 +127,20 @@ const updateCalendar = (date) => {
 
         tableBody.offsetHeight;
         tableBody.classList.remove('fade-out');
-    }, 300); 
+    }, 300);
 };
 
+// Initial calendar update with the current date.
 const current = new Date();
 updateCalendar(current);
 
+// Event listener for the previous month button.
 document.getElementById('prevMonth').addEventListener('click', () => {
     current.setMonth(current.getMonth() - 1);
     updateCalendar(current);
 });
 
+// Event listener for the next month button.
 document.getElementById('nextMonth').addEventListener('click', () => {
     current.setMonth(current.getMonth() + 1);
     updateCalendar(current);
